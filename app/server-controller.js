@@ -1,4 +1,5 @@
-const { getAllTopics } = require("./server-model");
+const { getAllTopics, findEndpoints } = require("./server-model");
+const endPoints = require("../endpoints.json");
 
 exports.getTopics = (req, res, next) => {
   getAllTopics()
@@ -6,7 +7,10 @@ exports.getTopics = (req, res, next) => {
       res.status(200).send(rows);
     })
     .catch((err) => {
-      console.log(err, "<-- error in catch block");
       next(err);
     });
+};
+
+exports.getEndpoints = (req, res, next) => {
+  res.status(200).send(endPoints);
 };
