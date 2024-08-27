@@ -5,6 +5,7 @@ const {
   getEndpoints,
   getArticleById,
   getArticles,
+  getCommentsByArticle,
 } = require("./server-controller");
 const {
   handlePSQLErrors,
@@ -19,6 +20,8 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
+
+app.get("/api/articles/:article_id/comments", getCommentsByArticle);
 
 app.use(handlePSQLErrors);
 app.use(handleCustomErrors);

@@ -2,6 +2,8 @@ const {
   getAllTopics,
   findArticleById,
   getAllArticles,
+  findComments,
+  findCommentsByArticle,
 } = require("./server-model");
 const endpoints = require("../endpoints.json");
 
@@ -30,6 +32,19 @@ exports.getArticleById = (req, res, next) => {
   findArticleById(article_id)
     .then((data) => {
       res.status(200).send({ article: data[0] });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getCommentsByArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  findArticleById(article_id)
+    .then(() => {
+      findComments(article_id).then((comments) =>
+        res.status(200).send(comments)
+      );
     })
     .catch((err) => {
       next(err);
