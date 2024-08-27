@@ -9,7 +9,7 @@ exports.getAllTopics = () => {
 exports.getAllArticles = () => {
   return db
     .query(
-      `SELECT articles.*, COUNT (comment_id) AS comment_count
+      `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT (comment_id) AS comment_count
         FROM articles
         LEFT JOIN comments ON
         comments.article_id = 
@@ -18,9 +18,6 @@ exports.getAllArticles = () => {
         ORDER BY articles.created_at DESC;`
     )
     .then(({ rows }) => {
-      rows.forEach((article) => {
-        delete article.body;
-      });
       return rows;
     });
 };
@@ -32,5 +29,16 @@ exports.findArticleById = (article_id) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "article does not exist" });
       } else return rows;
+    });
+};
+
+exports.findComments = (article_id) => {
+  return db
+    .query(
+      `SELECT * FROM comments WHERE article_id = $1 ORDER BY comments.created_at DESC`,
+      [article_id]
+    )
+    .then(({ rows }) => {
+      return rows;
     });
 };
