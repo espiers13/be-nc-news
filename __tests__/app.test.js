@@ -68,5 +68,44 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
-// errors:
-// wrong id format - 400: bad request
+
+describe("GET /api/articles", () => {
+  test("status 200: responds with an array of all article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body));
+        expect(body.length).toBeGreaterThan(0);
+        body.forEach((article) => {
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("author");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("comment_count");
+        });
+      });
+  });
+  test("status 200: returned article objects do not have a body property", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBeGreaterThan(0);
+        body.forEach((article) => {
+          expect(article).not.toHaveProperty("body");
+        });
+      });
+  });
+  test("status 200: returned articles should be sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});

@@ -1,5 +1,13 @@
-const { getAllTopics, findArticleById } = require("./server-model");
+const {
+  getAllTopics,
+  findArticleById,
+  getAllArticles,
+} = require("./server-model");
 const endpoints = require("../endpoints.json");
+
+exports.getEndpoints = (req, res, next) => {
+  res.status(200).send({ endpoints });
+};
 
 exports.getTopics = (req, res, next) => {
   getAllTopics()
@@ -11,17 +19,17 @@ exports.getTopics = (req, res, next) => {
     });
 };
 
-exports.getEndpoints = (req, res, next) => {
-  res.status(200).send({ endpoints });
+exports.getArticles = (req, res, next) => {
+  getAllArticles().then((articles) => {
+    res.status(200).send(articles);
+  });
 };
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   findArticleById(article_id)
     .then((data) => {
-      if (data.length === 0) {
-        return Promise.reject({ status: 404, msg: "article does not exist" });
-      } else res.status(200).send({ article: data[0] });
+      res.status(200).send({ article: data[0] });
     })
     .catch((err) => {
       next(err);

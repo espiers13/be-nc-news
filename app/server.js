@@ -4,6 +4,7 @@ const {
   getTopics,
   getEndpoints,
   getArticleById,
+  getArticles,
 } = require("./server-controller");
 const {
   handlePSQLErrors,
@@ -11,11 +12,11 @@ const {
   handleServerErrors,
 } = require("./errors");
 
-app.use(express.json());
-
 app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
+
+app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
 
