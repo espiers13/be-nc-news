@@ -1,18 +1,11 @@
 const express = require("express");
 const app = express();
-const { getTopics } = require("./server-controller");
-const {
-  handlePSQLErrors,
-  handleCustomErrors,
-  handleServerErrors,
-} = require("./errors");
+const { getTopics, getEndpoints } = require("./server-controller");
 
 app.use(express.json());
 
-app.get("/api/topics", getTopics);
+app.get("/api", getEndpoints);
 
-app.use(handlePSQLErrors);
-app.use(handleCustomErrors);
-app.use(handleServerErrors);
+app.get("/api/topics", getTopics);
 
 module.exports = app;
