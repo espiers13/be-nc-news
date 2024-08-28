@@ -47,6 +47,7 @@ exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   findArticleById(article_id)
     .then((data) => {
+      console.log(data);
       res.status(200).send({ article: data[0] });
     })
     .catch((err) => {
