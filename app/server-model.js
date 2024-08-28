@@ -43,23 +43,30 @@ exports.findComments = (article_id) => {
     });
 };
 
+exports.findNewestComment = () => {
+  return db
+    .query(
+      `SELECT * FROM comments WHERE comment_id = (SELECT MAX (comment_id) FROM comments);`
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
 exports.createNewComment = (article_id, username, body) => {
-  if (username && body) {
-    db.query(
-      `INSERT INTO comments
+  return db.query(
+    `INSERT INTO comments
         (body, author, article_id)
         VALUES
         ($1, $2, $3)`,
-      [body, username, article_id]
-    );
-    return db
-      .query(
-        `SELECT * FROM comments WHERE comment_id = (SELECT MAX (comment_id) FROM comments);`
-      )
-      .then(({ rows }) => {
-        return rows;
-      });
-  } else {
-    return Promise.reject({ status: 400, msg: "bad request" });
-  }
+    [body, username, article_id]
+  );
+};
+
+exports.postArticle = (article_id, votes) => {
+  db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id]);
+  return db.query(
+    `UPDATE articles SET votes = votes + $1 WHERE article_id = $2`,
+    [votes, article_id]
+  );
 };
