@@ -43,6 +43,17 @@ exports.findComments = (article_id) => {
     });
 };
 
+exports.findCommentById = (comment_id) => {
+  return db
+    .query(`SELECT * FROM comments WHERE comment_id = $1`, [comment_id])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "comment does not exist" });
+      }
+      return rows;
+    });
+};
+
 exports.findNewestComment = () => {
   return db
     .query(
@@ -63,10 +74,13 @@ exports.createNewComment = (article_id, username, body) => {
   );
 };
 
-exports.postArticle = (article_id, votes) => {
-  db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id]);
+exports.updateArticle = (article_id, votes) => {
   return db.query(
     `UPDATE articles SET votes = votes + $1 WHERE article_id = $2`,
     [votes, article_id]
   );
+};
+
+exports.deleteComment = (comment_id) => {
+  return db.query(`DELETE FROM comments WHERE comment_id = $1`, [comment_id]);
 };
