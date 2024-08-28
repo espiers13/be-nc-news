@@ -3,7 +3,7 @@ const {
   findArticleById,
   getAllArticles,
   findComments,
-  findCommentsByArticle,
+  createNewComment,
 } = require("./server-model");
 const endpoints = require("../endpoints.json");
 
@@ -45,6 +45,25 @@ exports.getCommentsByArticle = (req, res, next) => {
       findComments(article_id).then((comments) =>
         res.status(200).send(comments)
       );
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postNewComment = (req, res, next) => {
+  let { article_id } = req.params;
+  const { username } = req.body;
+  const { body } = req.body;
+  findArticleById(article_id)
+    .then(() => {
+      createNewComment(article_id, username, body)
+        .then((comment) => {
+          res.status(201).send(comment[0]);
+        })
+        .catch((err) => {
+          next(err);
+        });
     })
     .catch((err) => {
       next(err);
