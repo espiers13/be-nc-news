@@ -42,3 +42,24 @@ exports.findComments = (article_id) => {
       return rows;
     });
 };
+
+exports.createNewComment = (article_id, username, body) => {
+  if (username && body) {
+    db.query(
+      `INSERT INTO comments
+        (body, author, article_id)
+        VALUES
+        ($1, $2, $3)`,
+      [body, username, article_id]
+    );
+    return db
+      .query(
+        `SELECT * FROM comments WHERE comment_id = (SELECT MAX (comment_id) FROM comments);`
+      )
+      .then(({ rows }) => {
+        return rows;
+      });
+  } else {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+};

@@ -6,12 +6,14 @@ const {
   getArticleById,
   getArticles,
   getCommentsByArticle,
+  postNewComment,
 } = require("./server-controller");
 const {
   handlePSQLErrors,
   handleCustomErrors,
   handleServerErrors,
 } = require("./errors");
+app.use(express.json());
 
 app.get("/api", getEndpoints);
 
@@ -22,6 +24,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticle);
+
+app.post("/api/articles/:article_id/comments", postNewComment);
 
 app.use(handlePSQLErrors);
 app.use(handleCustomErrors);

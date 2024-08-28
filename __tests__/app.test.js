@@ -126,6 +126,7 @@ describe("GET /api/articles/:article_id/comments", () => {
           expect(comment).toHaveProperty("author");
           expect(comment).toHaveProperty("body");
           expect(comment).toHaveProperty("article_id");
+          expect(comment.article_id).toBe(1);
         });
       });
   });
@@ -152,6 +153,63 @@ describe("GET /api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         expect(Array.isArray(body)).toBe(true);
         expect(body.length).toBe(0);
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("status 201: posts a new comment to an article by article_id and responds with posted comment", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "butter_bridge",
+        body: "this is a good comment",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("body");
+        expect(body).toHaveProperty("votes");
+        expect(body).toHaveProperty("author");
+        expect(body).toHaveProperty("article_id");
+        expect(body).toHaveProperty("created_at");
+        expect(body.author).toBe("butter_bridge");
+        expect(body.body).toBe("this is a good comment");
+        expect(body.article_id).toBe(1);
+      });
+  });
+  test("ERROR 404 - responds with an appropriate status and error message when provided with a valid but non-existent article_id", () => {
+    return request(app)
+      .post("/api/articles/999/comments")
+      .send({
+        username: "betty123",
+        body: "meow",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("ERROR 400 - responds with an appropriate status and error message when provided with an article_id in an invalid format", () => {
+    return request(app)
+      .post("/api/articles/not-an-id/comments")
+      .send({
+        username: "betty123",
+        body: "meow",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("ERROR 400 - responds with an appropriate status and error message when provided with a bad comment (no username)", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        body: "meow",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
       });
   });
 });
