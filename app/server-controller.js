@@ -3,9 +3,11 @@ const {
   findArticleById,
   getAllArticles,
   findComments,
+  findCommentById,
   findNewestComment,
   createNewComment,
-  postArticle,
+  updateArticle,
+  deleteComment,
 } = require("./server-model");
 const endpoints = require("../endpoints.json");
 
@@ -72,12 +74,26 @@ exports.postNewComment = (req, res, next) => {
 exports.updateArticleVotes = (req, res, next) => {
   const { article_id } = req.params;
   let { inc_votes } = req.body;
-  postArticle(article_id, inc_votes).catch((err) => {
+  updateArticle(article_id, inc_votes).catch((err) => {
     next(err);
   });
   findArticleById(article_id)
     .then((article) => {
       res.status(200).send(article[0]);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  findCommentById(comment_id).catch((err) => {
+    next(err);
+  });
+  deleteComment(comment_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch((err) => {
       next(err);
