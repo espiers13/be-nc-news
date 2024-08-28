@@ -22,6 +22,12 @@ exports.getAllArticles = () => {
     });
 };
 
+exports.getAllUsers = () => {
+  return db.query(`SELECT * FROM users;`).then(({ rows }) => {
+    return rows;
+  });
+};
+
 exports.findArticleById = (article_id) => {
   return db
     .query(`SELECT * FROM ARTICLES WHERE article_id = $1;`, [article_id])

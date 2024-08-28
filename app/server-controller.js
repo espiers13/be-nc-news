@@ -2,6 +2,7 @@ const {
   getAllTopics,
   findArticleById,
   getAllArticles,
+  getAllUsers,
   findComments,
   findCommentById,
   findNewestComment,
@@ -28,6 +29,12 @@ exports.getTopics = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   getAllArticles().then((articles) => {
     res.status(200).send(articles);
+  });
+};
+
+exports.getUsers = (req, res, next) => {
+  getAllUsers().then((users) => {
+    res.status(200).send(users);
   });
 };
 
