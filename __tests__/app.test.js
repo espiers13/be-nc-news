@@ -373,3 +373,24 @@ describe("GET /api/articles (sorting queries)", () => {
     });
   });
 });
+
+describe("GET /api/articles (topic query)", () => {
+  test("status 200: responds with an array of articles filtered by the given topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((article) => {
+          expect(article.topic).toBe("cats");
+        });
+      });
+  });
+  test("ERROR 400: sends an appropriate status and error message when given an invalid topic", () => {
+    return request(app)
+      .get("/api/articles/topic=invalid-topic")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});
