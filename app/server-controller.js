@@ -27,14 +27,20 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  getAllArticles().then((articles) => {
-    res.status(200).send(articles);
-  });
+  const { sort_by } = req.query;
+  const { order } = req.query;
+  getAllArticles(sort_by, order)
+    .then((articles) => {
+      res.status(200).send(articles);
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getUsers = (req, res, next) => {
   getAllUsers().then((users) => {
-    res.status(200).send(users);
+    res.status(200).send({ users });
   });
 };
 

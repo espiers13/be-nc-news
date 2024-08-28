@@ -308,13 +308,68 @@ describe("GET /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then(({ body }) => {
-        expect(Array.isArray(body));
-        expect(body.length).toBeGreaterThan(0);
-        body.forEach((user) => {
+        expect(Array.isArray(body.users));
+        expect(body.users.length).toBeGreaterThan(0);
+        body.users.forEach((user) => {
           expect(user).toHaveProperty("username");
           expect(user).toHaveProperty("name");
           expect(user).toHaveProperty("avatar_url");
         });
       });
+  });
+});
+
+describe("GET /api/articles (sorting queries)", () => {
+  describe("sort_by - responds with an array of article objects sorted by any valid column (default order: descending)", () => {
+    test("status 200: sort_by: title", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSortedBy("title", { descending: true });
+        });
+    });
+    test("status 200: sort_by: topic", () => {
+      return request(app)
+        .get("/api/articles?sort_by=topic")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSortedBy("topic", { descending: true });
+        });
+    });
+    test("ERROR 400: responds with appropriate status and error message when given an invalid search criteria", () => {
+      return request(app)
+        .get("/api/articles?sort_by=invalid-criteria")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+  });
+  describe("order - responds with an array of article objects sorted either asc or desc", () => {
+    test("status 200: order: asc", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSortedBy("created_at", { descending: false });
+        });
+    });
+    test("status 200: order: asc, sort_by: votes", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes&order=asc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSortedBy("votes", { descending: false });
+        });
+    });
+    test("status 200: defaults to descending order when invalid order request is given", () => {
+      return request(app)
+        .get("/api/articles?order=invalid-order")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toBeSortedBy("created_at", { descending: true });
+        });
+    });
   });
 });
