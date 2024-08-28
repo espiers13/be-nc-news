@@ -186,7 +186,9 @@ describe("POST /api/articles/:article_id/comments", () => {
       })
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("article does not exist");
+        expect(body.msg).toBe(
+          'Key (article_id)=(999) is not present in table "articles".'
+        );
       });
   });
   test("ERROR 400 - responds with an appropriate status and error message when provided with an article_id in an invalid format", () => {
@@ -206,6 +208,70 @@ describe("POST /api/articles/:article_id/comments", () => {
       .post("/api/articles/1/comments")
       .send({
         body: "meow",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("status 201: posts a new comment ignoring unnecessary properties in post object", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "butter_bridge",
+        body: "this is a good comment",
+        created_at: 12345678,
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.created_at).not.toBe(12345678);
+      });
+  });
+  test("ERROR 404 - responds with an appropriate status and error message when username is given but does not exist", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        username: "betty",
+        body: "this is a good comment",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          'Key (author)=(betty) is not present in table "users".'
+        );
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("status 200: updates an articles votes in the database given an article id", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({
+        inc_votes: 3,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article_id).toBe(1);
+        expect(body.votes).toBe(103);
+      });
+  });
+  test("status 404: sends an appropriate status and error message when given a valid but non-existent id", () => {
+    return request(app)
+      .patch("/api/articles/999")
+      .send({
+        inc_votes: 1,
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("status 404: sends an appropriate status and error message when given a non-valid body", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({
+        inc_votes: "invalid votes",
       })
       .expect(400)
       .then(({ body }) => {
