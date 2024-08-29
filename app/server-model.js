@@ -22,7 +22,7 @@ exports.getAllArticles = (sort_by, order, topic) => {
     queryStr += ` ORDER BY articles.created_at`;
   } else queryStr += ` ORDER BY articles.${sort_by}`;
 
-  if (order === "asc") {
+  if (order === "asc" || order === "ASC") {
     queryStr += ` ASC`;
   } else queryStr += ` DESC`;
 
