@@ -380,17 +380,26 @@ describe("GET /api/articles (topic query)", () => {
       .get("/api/articles?topic=cats")
       .expect(200)
       .then(({ body }) => {
+        expect(body.length).toBeGreaterThan(0);
         body.forEach((article) => {
           expect(article.topic).toBe("cats");
         });
       });
   });
-  test("ERROR 400: sends an appropriate status and error message when given an invalid topic", () => {
+  test("ERROR 404: sends an appropriate status and error message when given an invalid topic", () => {
     return request(app)
-      .get("/api/articles/topic=invalid-topic")
-      .expect(400)
+      .get("/api/articles?topic=invalid-topic")
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("bad request");
+        expect(body.msg).toBe("topic does not exist");
+      });
+  });
+  test("status 200: responds with an empty array when passed a valid topic with no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(0);
       });
   });
 });

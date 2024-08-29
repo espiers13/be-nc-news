@@ -1,5 +1,6 @@
 const {
   getAllTopics,
+  checkTopicExists,
   findArticleById,
   getAllArticles,
   getAllUsers,
@@ -28,13 +29,28 @@ exports.getTopics = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const { sort_by, order, topic } = req.query;
-  getAllArticles(sort_by, order, topic)
-    .then((articles) => {
-      res.status(200).send(articles);
-    })
-    .catch((err) => {
-      next(err);
-    });
+  if (topic) {
+    checkTopicExists(topic)
+      .catch((err) => {
+        next(err);
+      })
+      .then(() => {
+        getAllArticles(sort_by, order, topic)
+          .then((articles) => {
+            res.status(200).send(articles);
+          })
+          .catch((err) => {
+            next(err);
+          });
+      });
+  } else
+    getAllArticles(sort_by, order, topic)
+      .then((articles) => {
+        res.status(200).send(articles);
+      })
+      .catch((err) => {
+        next(err);
+      });
 };
 
 exports.getUsers = (req, res, next) => {
