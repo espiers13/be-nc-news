@@ -12,6 +12,8 @@ const {
   updateArticle,
   deleteComment,
   updateComment,
+  createNewArticle,
+  findArticleByTitle,
 } = require("./server-model");
 const endpoints = require("../endpoints.json");
 
@@ -132,8 +134,8 @@ exports.postNewComment = (req, res, next) => {
   });
 
   findNewestComment()
-    .then((article) => {
-      res.status(201).send(article[0]);
+    .then((comment) => {
+      res.status(201).send(comment);
     })
     .catch((err) => {
       next(err);
@@ -163,6 +165,21 @@ exports.deleteCommentById = (req, res, next) => {
   deleteComment(comment_id)
     .then(() => {
       res.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postNewArticle = (req, res, next) => {
+  const newArticle = req.body;
+  createNewArticle(newArticle).catch((err) => {
+    next(err);
+  });
+
+  findArticleByTitle(newArticle.title)
+    .then((article) => {
+      res.status(201).send(article);
     })
     .catch((err) => {
       next(err);

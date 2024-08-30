@@ -107,7 +107,7 @@ exports.findNewestComment = () => {
       `SELECT * FROM comments WHERE comment_id = (SELECT MAX (comment_id) FROM comments);`
     )
     .then(({ rows }) => {
-      return rows;
+      return rows[0];
     });
 };
 
@@ -137,4 +137,37 @@ exports.updateComment = (comment_id, votes) => {
     `UPDATE comments SET votes = votes + $1 WHERE comment_id = $2`,
     [votes, comment_id]
   );
+};
+
+exports.findArticleByTitle = (title) => {
+  return db
+    .query(
+      `SELECT articles.*, COUNT (comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON
+    articles.article_id = comments.article_id
+    WHERE articles.title = $1
+    GROUP BY articles.article_id`,
+      [title]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
+
+exports.createNewArticle = (article) => {
+  const values = [article.author, article.title, article.body, article.topic];
+  let queryStr = `INSERT INTO articles
+  (author, title, body, topic, article_img_url)
+  VALUES
+  ($1, $2, $3, $4`;
+
+  if (article.article_img_url) {
+    values.push(article.article_img_url);
+    queryStr += `, $5)`;
+  } else {
+    queryStr += `, DEFAULT)`;
+  }
+
+  return db.query(queryStr, values);
 };

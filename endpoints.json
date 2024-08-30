@@ -125,5 +125,57 @@
   },
   "DELETE /api/comments/:comment_id": {
     "description": "deletes a comment by given comment_id"
+  },
+  "GET /api/comments/:comment_id": {
+    "description": "serves a comment object by its comment_id",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "body": "example_comment",
+        "votes": 0,
+        "author": "example_username",
+        "article_id": 1,
+        "created_at": 1586179020000
+      }
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates the vote count on a comment",
+    "queries": [],
+    "accepts": {
+      "inc_votes": 1
+    },
+    "exampleResponse": {
+      "comment": {
+        "body": "example_comment",
+        "votes": "updated_vote_count",
+        "author": "example_username",
+        "article_id": 1,
+        "created_at": 1586179020000
+      }
+    }
+  },
+  "POST /api/articles": {
+    "description": "accepts an object as an article and adds it to articles database",
+    "queries": [],
+    "accepts": {
+      "author": "example_username",
+      "title": "example_title",
+      "body": "example_article",
+      "topic": "example topic",
+      "article_img_url": "example_url"
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 30,
+        "title": "example_title",
+        "topic": "example topic",
+        "author": "example_username",
+        "body": "example_article",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "votes": 0,
+        "article_img_url": "example_url"
+      }
+    }
   }
 }
