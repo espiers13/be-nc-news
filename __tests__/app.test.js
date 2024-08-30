@@ -417,8 +417,8 @@ describe("GET /api/articles/:article_id (comment_count)", () => {
   });
 });
 
-// describe("Express Routers", () => {
-//   test("connects to apiRouter", () => {
-//     return request(app).get("/api").expect(200);
-//   });
-// });
+describe("Express Routers", () => {
+  test("connects to apiRouter", () => {
+    return request(app).get("/api").expect(200);
+  });
+});
