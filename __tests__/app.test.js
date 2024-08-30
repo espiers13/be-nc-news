@@ -246,14 +246,26 @@ describe("POST /api/articles/:article_id/comments", () => {
 describe("PATCH /api/articles/:article_id", () => {
   test("status 200: updates an articles votes in the database given an article id", () => {
     return request(app)
+      .patch("/api/articles/2")
+      .send({
+        inc_votes: 1,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article_id).toBe(2);
+        expect(body.votes).toBe(1);
+      });
+  });
+  test("status 200: updates an articles votes in the database given an article id (negative votes)", () => {
+    return request(app)
       .patch("/api/articles/1")
       .send({
-        inc_votes: 3,
+        inc_votes: -1,
       })
       .expect(200)
       .then(({ body }) => {
         expect(body.article_id).toBe(1);
-        expect(body.votes).toBe(103);
+        expect(body.votes).toBe(99);
       });
   });
   test("status 404: sends an appropriate status and error message when given a valid but non-existent id", () => {
@@ -420,5 +432,104 @@ describe("GET /api/articles/:article_id (comment_count)", () => {
 describe("Express Routers", () => {
   test("connects to apiRouter", () => {
     return request(app).get("/api").expect(200);
+  });
+});
+
+describe("GET /api/users/:username", () => {
+  test("status 200: responds with a user object by username", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toHaveProperty("username");
+        expect(body.user).toHaveProperty("avatar_url");
+        expect(body.user).toHaveProperty("name");
+        expect(body.user.username).toBe("butter_bridge");
+      });
+  });
+  test("ERROR 404: sends an appropriate status and error message when given a valid but non-existent username", () => {
+    return request(app)
+      .get("/api/users/betty_boop")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("user does not exist");
+      });
+  });
+});
+
+describe("GET /api/comments/:comment_id", () => {
+  test("status 200: responds with a comment object by comment_id", () => {
+    return request(app)
+      .get("/api/comments/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toHaveProperty("body");
+        expect(body.comment).toHaveProperty("votes");
+        expect(body.comment).toHaveProperty("author");
+        expect(body.comment).toHaveProperty("article_id");
+        expect(body.comment).toHaveProperty("created_at");
+        expect(body.comment.comment_id).toBe(1);
+      });
+  });
+  test("ERROR 404: sends an appropriate status and error message when given a valid but non-existent comment_id", () => {
+    return request(app)
+      .get("/api/comments/999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("comment does not exist");
+      });
+  });
+  test("ERROR 400: sends an appropriate status and error message when given an id in an invaild format", () => {
+    return request(app)
+      .get("/api/comments/not-a-comment")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+});
+
+describe("PATCH /api/comments/:comment_id", () => {
+  // test("status 200: updates the votes on a comment using the comment's comment_id", () => {
+  //   return request(app)
+  //     .patch("/api/comments/1")
+  //     .send({ inc_votes: 1 })
+  //     .expect(200)
+  //     .then(({ body }) => {
+  //       expect(body.comment_id).toBe(1);
+  //       expect(body.votes).toBe(17);
+  //     });
+  // });
+  // test("status 200: updates the votes on a comment using the comment's comment_id (negative votes)", () => {
+  //   return request(app)
+  //     .patch("/api/comments/2")
+  //     .send({ inc_votes: -1 })
+  //     .expect(200)
+  //     .then(({ body }) => {
+  //       expect(body.comment_id).toBe(2);
+  //       expect(body.votes).toBe(13);
+  //     });
+  // });
+  test("status 404: sends an appropriate status and error message when given a valid but non-existent id", () => {
+    return request(app)
+      .patch("/api/comments/999")
+      .send({
+        inc_votes: 1,
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment does not exist");
+      });
+  });
+  test("status 400: sends an appropriate status and error message when given a non-valid body", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({
+        inc_votes: "invalid votes",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
   });
 });
