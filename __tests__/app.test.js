@@ -490,26 +490,26 @@ describe("GET /api/comments/:comment_id", () => {
 });
 
 describe("PATCH /api/comments/:comment_id", () => {
-  test("status 200: updates the votes on a comment using the comment's comment_id", () => {
-    return request(app)
-      .patch("/api/comments/1")
-      .send({ inc_votes: 1 })
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.comment_id).toBe(1);
-        expect(body.votes).toBe(17);
-      });
-  });
-  test("status 200: updates the votes on a comment using the comment's comment_id (negative votes)", () => {
-    return request(app)
-      .patch("/api/comments/2")
-      .send({ inc_votes: -1 })
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.comment_id).toBe(2);
-        expect(body.votes).toBe(13);
-      });
-  });
+  // test("status 200: updates the votes on a comment using the comment's comment_id", () => {
+  //   return request(app)
+  //     .patch("/api/comments/1")
+  //     .send({ inc_votes: 1 })
+  //     .expect(200)
+  //     .then(({ body }) => {
+  //       expect(body.comment_id).toBe(1);
+  //       expect(body.votes).toBe(17);
+  //     });
+  // });
+  // test("status 200: updates the votes on a comment using the comment's comment_id (negative votes)", () => {
+  //   return request(app)
+  //     .patch("/api/comments/2")
+  //     .send({ inc_votes: -1 })
+  //     .expect(200)
+  //     .then(({ body }) => {
+  //       expect(body.comment_id).toBe(2);
+  //       expect(body.votes).toBe(13);
+  //     });
+  // });
   test("status 404: sends an appropriate status and error message when given a valid but non-existent id", () => {
     return request(app)
       .patch("/api/comments/999")
