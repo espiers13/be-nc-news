@@ -4,12 +4,14 @@ const {
   findArticleById,
   getAllArticles,
   getAllUsers,
+  findUserByUsername,
   findComments,
   findCommentById,
   findNewestComment,
   createNewComment,
   updateArticle,
   deleteComment,
+  updateComment,
 } = require("./server-model");
 const endpoints = require("../endpoints.json");
 
@@ -53,12 +55,6 @@ exports.getArticles = (req, res, next) => {
       });
 };
 
-exports.getUsers = (req, res, next) => {
-  getAllUsers().then((users) => {
-    res.status(200).send({ users });
-  });
-};
-
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   findArticleById(article_id)
@@ -70,6 +66,24 @@ exports.getArticleById = (req, res, next) => {
     });
 };
 
+exports.getUsers = (req, res, next) => {
+  getAllUsers().then((users) => {
+    res.status(200).send({ users });
+  });
+};
+
+exports.getUserByUsername = (req, res, next) => {
+  const { username } = req.params;
+  findUserByUsername(username)
+    .then((user) => {
+      res.status(200).send({ user });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+};
+
 exports.getCommentsByArticle = (req, res, next) => {
   const { article_id } = req.params;
   findArticleById(article_id)
@@ -77,6 +91,34 @@ exports.getCommentsByArticle = (req, res, next) => {
       findComments(article_id).then((comments) =>
         res.status(200).send(comments)
       );
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  findCommentById(comment_id)
+    .then((comment) => {
+      console.log(comment);
+      res.status(200).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.updateCommentVotes = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+
+  updateComment(comment_id, inc_votes).catch((err) => {
+    next(err);
+  });
+  findCommentById(comment_id)
+    .then((comment) => {
+      res.status(200).send(comment);
     })
     .catch((err) => {
       next(err);
