@@ -16,7 +16,10 @@ const {
   handleCustomErrors,
   handleServerErrors,
 } = require("./errors");
+const { apiRouter } = require("./api-routers");
 app.use(express.json());
+
+// app.use("/api", apiRouter);
 
 app.get("/api", getEndpoints);
 
