@@ -370,6 +370,14 @@ describe("GET", () => {
               expect(body).toBeSortedBy("topic", { descending: true });
             });
         });
+        test("status 200: sort_by: comment count", () => {
+          return request(app)
+            .get("/api/articles?sort_by=comment_count")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).toBeSortedBy("comment_count", { descending: true });
+            });
+        });
         test("ERROR 400: responds with appropriate status and error message when given an invalid search criteria", () => {
           return request(app)
             .get("/api/articles?sort_by=invalid-criteria")

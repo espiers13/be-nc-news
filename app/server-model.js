@@ -30,6 +30,9 @@ exports.getAllArticles = (sort_by, order, topic) => {
 
   if (sort_by === undefined) {
     queryStr += ` ORDER BY articles.created_at`;
+  }
+  if (sort_by === "comment_count") {
+    queryStr += ` ORDER BY comment_count`;
   } else queryStr += ` ORDER BY articles.${sort_by}`;
 
   if (order === "asc" || order === "ASC") {
@@ -37,6 +40,10 @@ exports.getAllArticles = (sort_by, order, topic) => {
   } else queryStr += ` DESC`;
 
   return db.query(queryStr).then(({ rows }) => {
+    console.log(
+      rows.map((articles) => articles.comment_count),
+      "<-- result"
+    );
     return rows;
   });
 };
