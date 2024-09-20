@@ -30,8 +30,7 @@ exports.getAllArticles = (sort_by, order, topic) => {
 
   if (sort_by === undefined) {
     queryStr += ` ORDER BY articles.created_at`;
-  }
-  if (sort_by === "comment_count") {
+  } else if (sort_by === "comment_count") {
     queryStr += ` ORDER BY comment_count`;
   } else queryStr += ` ORDER BY articles.${sort_by}`;
 
