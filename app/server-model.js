@@ -40,10 +40,6 @@ exports.getAllArticles = (sort_by, order, topic) => {
   } else queryStr += ` DESC`;
 
   return db.query(queryStr).then(({ rows }) => {
-    console.log(
-      rows.map((articles) => articles.comment_count),
-      "<-- result"
-    );
     return rows;
   });
 };
