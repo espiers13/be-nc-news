@@ -40,7 +40,7 @@ describe.only("convertTimestampToDate", () => {
   });
 });
 
-describe("createRef", () => {
+describe.only("createRef", () => {
   test("returns an empty object, when passed an empty array", () => {
     const input = [];
     const actual = createRef(input);
@@ -74,7 +74,7 @@ describe("createRef", () => {
   });
 });
 
-describe("formatComments", () => {
+describe.only("formatComments", () => {
   test("returns an empty array, if passed an empty array", () => {
     const comments = [];
     expect(formatComments(comments, {})).toEqual([]);
